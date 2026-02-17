@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Jigsaw Puzzle App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🧩 Jigsaw Puzzle App</h1>
+        
+        <div class="setup-panel" id="setupPanel">
+            <div class="input-group">
+                <label for="imageInput">Choose Your Picture:</label>
+                <input type="file" id="imageInput" accept="image/*" capture="environment">
+            </div>
+
+            <div class="input-group">
+                <label>Select Number of Pieces:</label>
+                <div class="piece-selector">
+                    <div class="piece-option" data-pieces="30">30</div>
+                    <div class="piece-option selected" data-pieces="40">40</div>
+                    <div class="piece-option" data-pieces="50">50</div>
+                    <div class="piece-option" data-pieces="60">60</div>
+                    <div class="piece-option" data-pieces="70">70</div>
+                    <div class="piece-option" data-pieces="80">80</div>
+                    <div class="piece-option" data-pieces="90">90</div>
+                    <div class="piece-option" data-pieces="100">100</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="startBtn" disabled>Start Puzzle</button>
+        </div>
+
+        <div class="game-area" id="gameArea">
+            <div class="success-message" id="successMessage">
+                🎉 Congratulations! Puzzle Complete! 🎉
+            </div>
+
+            <div class="stats" id="stats">
+                Pieces Placed: <span id="placedCount">0</span> / <span id="totalCount">0</span>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-secondary" id="newPuzzleBtn">New Puzzle</button>
+            </div>
+
+            <div class="puzzle-container">
+                <div>
+                    <div class="board-label">Puzzle Board</div>
+                    <div class="puzzle-board" id="puzzleBoard"></div>
+                </div>
+                <div>
+                    <div class="board-label">Puzzle Pieces</div>
+                    <div class="pieces-tray" id="piecesTray"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
