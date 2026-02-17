@@ -574,17 +574,19 @@ function createPieceElement(pieceCanvas, pieceWidth, pieceHeight, col, row, tabS
 
 // Layout pieces in the tray
 function layoutPiecesInTray(pieces, tray, pieceWidth, pieceHeight) {
-    const trayWidth = tray.clientWidth - 40;
+    const trayPadding = 15; // Match CSS padding
+    const trayWidth = tray.clientWidth - (trayPadding * 2);
     const tabSize = pieceWidth * 0.2;
     const actualPieceWidth = pieceWidth + tabSize * 2;
-    const piecesPerRow = Math.floor(trayWidth / (actualPieceWidth + 5));
+    const gap = 8;
+    const piecesPerRow = Math.floor((trayWidth + gap) / (actualPieceWidth + gap));
 
     pieces.forEach((piece, index) => {
         const trayRow = Math.floor(index / piecesPerRow);
         const trayCol = index % piecesPerRow;
 
-        piece.style.left = (20 + trayCol * (actualPieceWidth + 5)) + 'px';
-        piece.style.top = (20 + trayRow * (actualPieceWidth + 5)) + 'px';
+        piece.style.left = (trayCol * (actualPieceWidth + gap)) + 'px';
+        piece.style.top = (trayRow * (actualPieceWidth + gap)) + 'px';
 
         tray.appendChild(piece);
     });

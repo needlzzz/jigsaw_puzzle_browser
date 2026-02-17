@@ -166,19 +166,46 @@ input[type="file"]:hover {
 
 .puzzle-board, .pieces-tray {
     border: 3px solid #667eea;
-    border-radiu300px;
-    width: 100%;
-    overflow: hiddenpx;
+    border-radius: 15px;
     background: #f8f9ff;
     position: relative;
-    min-height: 400px;
+    min-height: 300px;
+    width: 100%;
 }
 
 .puzzle-board {
+    overflow: hidden;
     background-image: 
         linear-gradient(rgba(102, 126, 234, 0.1) 1px, transparent 1px),
         linear-gradient(90deg, rgba(102, 126, 234, 0.1) 1px, transparent 1px);
     background-size: 20px 20px;
+}
+
+.pieces-tray {
+    max-height: 500px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 15px;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+}
+
+.pieces-tray::-webkit-scrollbar {
+    width: 8px;
+}
+
+.pieces-tray::-webkit-scrollbar-track {
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 10px;
+}
+
+.pieces-tray::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.pieces-tray::-webkit-scrollbar-thumb:hover {
+    background: #5568d3;
 }
 
 .puzzle-piece {
@@ -352,7 +379,8 @@ input[type="file"]:hover {
 }
 
 /* iPad and Mobile Responsive Design */
-@medbody {
+@media (max-width: 768px) {
+    body {
         padding: 5px;
     }
     
@@ -366,8 +394,13 @@ input[type="file"]:hover {
         gap: 15px;
     }
     
-    .puzzle-board, .pieces-tray {
+    .puzzle-board {
         min-height: 250px;
+    }
+    
+    .pieces-tray {
+        min-height: 200px;
+        max-height: 300px;
     }
     
     .piece-selector {
@@ -425,6 +458,10 @@ input[type="file"]:hover {
     .library-grid {
         grid-template-columns: repeat(2, 1fr);
     }
+    
+    .pieces-tray {
+        max-height: 250px;
+    }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
@@ -433,7 +470,10 @@ input[type="file"]:hover {
     }
     
     .container {
-        padding: 25px
-        grid-template-columns: 1fr 1fr;
+        padding: 25px;
+    }
+    
+    .pieces-tray {
+        max-height: 450px;
     }
 }
