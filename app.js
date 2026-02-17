@@ -270,11 +270,17 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
 
     for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
-            // Determine tabs for this piece
-            const hasTabTop = row > 0 ? !tabsBottom[row - 1][col] : false;
-            const hasTabRight = col < cols - 1 ? tabsRight[row][col] : false;
-            const hasTabBottom = row < rows - 1 ? tabsBottom[row][col] : false;
-            const hasTabLeft = col > 0 ? !tabsRight[row][col - 1] : false;
+            // Determine if edges are on puzzle boundary (should be flat)
+            const isTopEdge = row === 0;
+            const isRightEdge = col === cols - 1;
+            const isBottomEdge = row === rows - 1;
+            const isLeftEdge = col === 0;
+            
+            // Determine tabs for interior edges only
+            const hasTabTop = row > 0 ? !tabsBottom[row - 1][col] : null;
+            const hasTabRight = col < cols - 1 ? tabsRight[row][col] : null;
+            const hasTabBottom = row < rows - 1 ? tabsBottom[row][col] : null;
+            const hasTabLeft = col > 0 ? !tabsRight[row][col - 1] : null;
 
             const pieceCanvas = document.createElement('canvas');
             const tabSize = pieceImgWidth * 0.2;
@@ -298,7 +304,8 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
             pieceCtx.beginPath();
             createJigsawPath(
                 pieceCtx, tabSize, tabSize, pieceImgWidth, pieceImgHeight,
-                hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize
+                hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize,
+                isTopEdge, isRightEdge, isBottomEdge, isLeftEdge
             );
             pieceCtx.closePath();
             
@@ -326,7 +333,8 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
             pieceCtx.beginPath();
             createJigsawPath(
                 pieceCtx, tabSize, tabSize, pieceImgWidth, pieceImgHeight,
-                hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize
+                hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize,
+                isTopEdge, isRightEdge, isBottomEdge, isLeftEdge
             );
             pieceCtx.closePath();
             pieceCtx.shadowColor = 'rgba(0, 0, 0, 0.3)';
@@ -343,7 +351,8 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
             pieceCtx.beginPath();
             createJigsawPath(
                 pieceCtx, tabSize, tabSize, pieceImgWidth, pieceImgHeight,
-                hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize
+                hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize,
+                isTopEdge, isRightEdge, isBottomEdge, isLeftEdge
             );
             pieceCtx.closePath();
             pieceCtx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
@@ -364,7 +373,8 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
 }
 
 // Create jigsaw puzzle piece path with refined curves
-function createJigsawPath(ctx, x, y, width, height, tabTop, tabRight, tabBottom, tabLeft, tabSize) {
+function createJigsawPath(ctx, x, y, width, height, tabTop, tabRight, tabBottom, tabLeft, tabSize, 
+                         isTopEdge = false, isRightEdge = false, isBottomEdge = false, isLeftEdge = false) {
     const neckRatio = 0.12; // Smoother neck transition
     const tabDepth = tabSize * 0.95;
     const curveIntensity = 0.45; // Control point for bezier curves
@@ -372,7 +382,10 @@ function createJigsawPath(ctx, x, y, width, height, tabTop, tabRight, tabBottom,
     ctx.moveTo(x, y);
 
     // Top edge with smooth transitions
-    if (tabTop) {
+    if (isTopEdge) {
+        // Flat edge - no tab
+        ctx.lineTo(x + width, y);
+    } else if (tabTop) {
         ctx.lineTo(x + width * 0.28, y);
         // Tab out (knob)
         ctx.bezierCurveTo(
@@ -413,7 +426,10 @@ function createJigsawPath(ctx, x, y, width, height, tabTop, tabRight, tabBottom,
     }
 
     // Right edge
-    if (tabRight) {
+    if (isRightEdge) {
+        // Flat edge - no tab
+        ctx.lineTo(x + width, y + height);
+    } else if (tabRight) {
         ctx.lineTo(x + width, y + height * 0.28);
         ctx.bezierCurveTo(
             x + width, y + height * (0.28 + neckRatio),
@@ -452,7 +468,10 @@ function createJigsawPath(ctx, x, y, width, height, tabTop, tabRight, tabBottom,
     }
 
     // Bottom edge
-    if (tabBottom) {
+    if (isBottomEdge) {
+        // Flat edge - no tab
+        ctx.lineTo(x, y + height);
+    } else if (tabBottom) {
         ctx.lineTo(x + width * 0.72, y + height);
         ctx.bezierCurveTo(
             x + width * (0.72 - neckRatio), y + height,
@@ -491,7 +510,10 @@ function createJigsawPath(ctx, x, y, width, height, tabTop, tabRight, tabBottom,
     }
 
     // Left edge
-    if (tabLeft) {
+    if (isLeftEdge) {
+        // Flat edge - no tab
+        ctx.lineTo(x, y);
+    } else if (tabLeft) {
         ctx.lineTo(x, y + height * 0.72);
         ctx.bezierCurveTo(
             x, y + height * (0.72 - neckRatio),
