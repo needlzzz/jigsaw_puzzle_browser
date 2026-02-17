@@ -285,11 +285,11 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
             const pieceCanvas = document.createElement('canvas');
             const tabSize = pieceImgWidth * 0.2;
             
-            // Calculate canvas size - no extra space on boundary edges
-            const extraLeft = isLeftEdge ? 0 : tabSize;
-            const extraRight = isRightEdge ? 0 : tabSize;
-            const extraTop = isTopEdge ? 0 : tabSize;
-            const extraBottom = isBottomEdge ? 0 : tabSize;
+            // Calculate canvas size - always include space for tabs (even on edges for neighboring pieces)
+            const extraLeft = tabSize;
+            const extraRight = tabSize;
+            const extraTop = tabSize;
+            const extraBottom = tabSize;
             
             // Use higher resolution for smoother edges
             const scale = 2;
@@ -318,13 +318,19 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
             // Clip to the jigsaw shape
             pieceCtx.clip();
 
-            // Draw the image portion with the tabs offset
+            // Draw the image including tab areas - extend into neighboring territory
+            // Source coordinates account for tabs extending into neighbors
+            const sourceX = col * pieceImgWidth - tabSize;
+            const sourceY = row * pieceImgHeight - tabSize;
+            const sourceWidth = pieceImgWidth + tabSize * 2;
+            const sourceHeight = pieceImgHeight + tabSize * 2;
+            
             pieceCtx.drawImage(
                 canvas,
-                col * pieceImgWidth, row * pieceImgHeight,
-                pieceImgWidth, pieceImgHeight,
-                extraLeft, extraTop,
-                pieceImgWidth, pieceImgHeight
+                sourceX, sourceY,
+                sourceWidth, sourceHeight,
+                0, 0,
+                pieceImgWidth + tabSize * 2, pieceImgHeight + tabSize * 2
             );
             
             pieceCtx.restore();
@@ -333,7 +339,7 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
             pieceCtx.save();
             pieceCtx.beginPath();
             createJigsawPath(
-                pieceCtx, extraLeft, extraTop, pieceImgWidth, pieceImgHeight,
+                pieceCtx, tabSize, tabSize, pieceImgWidth, pieceImgHeight,
                 hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize,
                 isTopEdge, isRightEdge, isBottomEdge, isLeftEdge
             );
@@ -351,7 +357,7 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
             pieceCtx.save();
             pieceCtx.beginPath();
             createJigsawPath(
-                pieceCtx, extraLeft, extraTop, pieceImgWidth, pieceImgHeight,
+                pieceCtx, tabSize, tabSize, pieceImgWidth, pieceImgHeight,
                 hasTabTop, hasTabRight, hasTabBottom, hasTabLeft, tabSize,
                 isTopEdge, isRightEdge, isBottomEdge, isLeftEdge
             );
@@ -363,7 +369,7 @@ function createPuzzlePieces(img, cols, rows, pieceWidth, pieceHeight) {
 
             // Create DOM element for piece
             const piece = createPieceElement(
-                pieceCanvas, pieceWidth, pieceHeight, col, row, extraLeft, extraTop
+                pieceCanvas, pieceWidth, pieceHeight, col, row, tabSize, tabSize
             );
 
             pieces.push(piece);
@@ -554,7 +560,7 @@ function createJigsawPath(ctx, x, y, width, height, tabTop, tabRight, tabBottom,
 }
 
 // Create a puzzle piece DOM element
-function createPieceElement(pieceCanvas, pieceWidth, pieceHeight, col, row, offsetLeft = 0, offsetTop = 0) {
+function createPieceElement(pieceCanvas, pieceWidth, pieceHeight, col, row, tabSizeLeft = 0, tabSizeTop = 0) {
     const piece = document.createElement('div');
     piece.className = 'puzzle-piece';
     
@@ -572,10 +578,8 @@ function createPieceElement(pieceCanvas, pieceWidth, pieceHeight, col, row, offs
     piece.dataset.correctY = row * pieceHeight;
     piece.dataset.col = col;
     piece.dataset.row = row;
-    piece.dataset.offsetLeft = offsetLeft;
-    piece.dataset.offsetTop = offsetTop;
-    // Keep tabSize for backward compatibility (use the left offset as a default)
-    piece.dataset.tabSize = offsetLeft;
+    // Store the tab size (offset used for positioning)
+    piece.dataset.tabSize = tabSizeLeft;
 
     return piece;
 }
@@ -712,8 +716,7 @@ function handlePieceDrop(piece, clientX, clientY, board, pieceWidth, pieceHeight
     const isOverBoard = clientX >= boardRect.left && clientX <= boardRect.right &&
                        clientY >= boardRect.top && clientY <= boardRect.bottom;
 
-    const offsetLeft = parseFloat(piece.dataset.offsetLeft || 0);
-    const offsetTop = parseFloat(piece.dataset.offsetTop || 0);
+    const tabSize = parseFloat(piece.dataset.tabSize || 0);
     const group = draggedGroup || findPieceGroup(piece);
 
     if (isOverBoard) {
@@ -735,8 +738,8 @@ function handlePieceDrop(piece, clientX, clientY, board, pieceWidth, pieceHeight
         const snapY = Math.round(y / pieceHeight) * pieceHeight;
 
         // Position the leader piece
-        piece.style.left = Math.max(0, Math.min(snapX - offsetLeft, boardRect.width - pieceWidth)) + 'px';
-        piece.style.top = Math.max(0, Math.min(snapY - offsetTop, boardRect.height - pieceHeight)) + 'px';
+        piece.style.left = Math.max(0, Math.min(snapX - tabSize, boardRect.width - pieceWidth)) + 'px';
+        piece.style.top = Math.max(0, Math.min(snapY - tabSize, boardRect.height - pieceHeight)) + 'px';
         piece.style.transform = 'none';
 
         // Position other pieces in the group relative to leader
@@ -866,8 +869,7 @@ function snapPiecesTogether(piece1, piece2, pieceWidth, pieceHeight) {
 function checkAndSnapToEdges(piece, board, boardRect, pieceWidth, pieceHeight) {
     const col = parseInt(piece.dataset.col);
     const row = parseInt(piece.dataset.row);
-    const offsetLeft = parseFloat(piece.dataset.offsetLeft || 0);
-    const offsetTop = parseFloat(piece.dataset.offsetTop || 0);
+    const tabSize = parseFloat(piece.dataset.tabSize || 0);
     
     const isLeftEdge = col === 0;
     const isRightEdge = col === currentPuzzle.cols - 1;
@@ -882,21 +884,21 @@ function checkAndSnapToEdges(piece, board, boardRect, pieceWidth, pieceHeight) {
     
     let snapped = false;
     
-    // Snap to left edge (left edge pieces have no offset on left side)
-    if (isLeftEdge && Math.abs(pieceLeft - 0) < edgeSnapTolerance) {
-        piece.style.left = '0px';
+    // Snap to left edge
+    if (isLeftEdge && Math.abs(pieceLeft - (-tabSize)) < edgeSnapTolerance) {
+        piece.style.left = (-tabSize) + 'px';
         snapped = true;
     }
     
-    // Snap to top edge (top edge pieces have no offset on top side)
-    if (isTopEdge && Math.abs(pieceTop - 0) < edgeSnapTolerance) {
-        piece.style.top = '0px';
+    // Snap to top edge
+    if (isTopEdge && Math.abs(pieceTop - (-tabSize)) < edgeSnapTolerance) {
+        piece.style.top = (-tabSize) + 'px';
         snapped = true;
     }
     
     // Snap to right edge
     if (isRightEdge) {
-        const rightEdgeX = boardRect.width - pieceWidth - offsetLeft;
+        const rightEdgeX = boardRect.width - pieceWidth - tabSize;
         if (Math.abs(pieceLeft - rightEdgeX) < edgeSnapTolerance) {
             piece.style.left = rightEdgeX + 'px';
             snapped = true;
@@ -905,7 +907,7 @@ function checkAndSnapToEdges(piece, board, boardRect, pieceWidth, pieceHeight) {
     
     // Snap to bottom edge
     if (isBottomEdge) {
-        const bottomEdgeY = boardRect.height - pieceHeight - offsetTop;
+        const bottomEdgeY = boardRect.height - pieceHeight - tabSize;
         if (Math.abs(pieceTop - bottomEdgeY) < edgeSnapTolerance) {
             piece.style.top = bottomEdgeY + 'px';
             snapped = true;
@@ -917,17 +919,16 @@ function checkAndSnapToEdges(piece, board, boardRect, pieceWidth, pieceHeight) {
 function checkCorrectPosition(piece, board) {
     const correctX = parseFloat(piece.dataset.correctX);
     const correctY = parseFloat(piece.dataset.correctY);
-    const offsetLeft = parseFloat(piece.dataset.offsetLeft || 0);
-    const offsetTop = parseFloat(piece.dataset.offsetTop || 0);
+    const tabSize = parseFloat(piece.dataset.tabSize || 0);
     const pieceLeft = parseFloat(piece.style.left);
     const pieceTop = parseFloat(piece.style.top);
     const tolerance = currentPuzzle.pieceWidth * 0.15;
 
-    if (Math.abs(pieceLeft - (correctX - offsetLeft)) < tolerance && 
-        Math.abs(pieceTop - (correctY - offsetTop)) < tolerance) {
+    if (Math.abs(pieceLeft - (correctX - tabSize)) < tolerance && 
+        Math.abs(pieceTop - (correctY - tabSize)) < tolerance) {
         
         if (!piece.classList.contains('correct')) {
-            placePieceCorrectly(piece, correctX - offsetLeft, correctY - offsetTop, board);
+            placePieceCorrectly(piece, correctX - tabSize, correctY - tabSize, board);
         }
     }
 }
