@@ -171,6 +171,7 @@ input[type="file"]:hover {
     position: relative;
     min-height: 300px;
     width: 100%;
+    z-index: 1;
 }
 
 .puzzle-board {
@@ -224,6 +225,14 @@ input[type="file"]:hover {
     cursor: grabbing;
     z-index: 9999;
     transform: scale(1.03);
+    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35)) 
+            drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25))
+            brightness(1.02);
+}
+
+.puzzle-piece.dragging {
+    z-index: 9999 !important;
+    cursor: grabbing;
     filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35)) 
             drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25))
             brightness(1.02);

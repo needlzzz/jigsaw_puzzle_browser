@@ -633,12 +633,16 @@ function makeDraggable(piece, board, tray, pieceWidth, pieceHeight) {
 
         if (e.target === piece) {
             isDragging = true;
+            piece.classList.add('dragging');
             piece.style.zIndex = 9999;
             
             // Find the group containing this piece
             draggedGroup = findPieceGroup(piece);
             if (draggedGroup) {
-                draggedGroup.pieces.forEach(p => p.style.zIndex = 9999);
+                draggedGroup.pieces.forEach(p => {
+                    p.classList.add('dragging');
+                    p.style.zIndex = 9999;
+                });
             }
         }
     };
@@ -672,9 +676,13 @@ function makeDraggable(piece, board, tray, pieceWidth, pieceHeight) {
     const dragEnd = (e) => {
         if (isDragging) {
             isDragging = false;
+            piece.classList.remove('dragging');
             piece.style.zIndex = 10;
             if (draggedGroup) {
-                draggedGroup.pieces.forEach(p => p.style.zIndex = 10);
+                draggedGroup.pieces.forEach(p => {
+                    p.classList.remove('dragging');
+                    p.style.zIndex = 10;
+                });
             }
 
             // Get drop position
