@@ -11,8 +11,9 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
-    touch-action: none;
+    padding: 10px;
+    touch-action: manipulation;
+    overflow-x: hidden;
 }
 
 .container {
@@ -21,15 +22,17 @@ body {
     background: white;
     border-radius: 20px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    padding: 30px;
+    padding: 20px;
     margin-bottom: 20px;
 }
 
 h1 {
     color: #667eea;
     text-align: center;
-    margin-bottom: 30px;
-    font-size: 2em;
+    margin-bottom: 20px;
+    font-size: clamp(1.2em, 5vw, 2em);
+    line-height: 1.3;
+    word-break: break-word;
 }
 
 .setup-panel {
@@ -48,15 +51,15 @@ h1 {
 label {
     font-weight: 600;
     color: #333;
-    font-size: 1.1em;
+    font-size: clamp(0.95em, 3vw, 1.1em);
 }
 
 input[type="file"] {
-    padding: 15px;
+    padding: 12px;
     border: 2px dashed #667eea;
     border-radius: 10px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: clamp(0.9em, 2.5vw, 1em);
     background: #f8f9ff;
 }
 
@@ -71,15 +74,19 @@ input[type="file"]:hover {
 }
 
 .piece-option {
-    padding: 15px;
+    padding: 12px 8px;
     border: 2px solid #ddd;
     border-radius: 10px;
     text-align: center;
     cursor: pointer;
-    font-size: 1.1em;
+    font-size: clamp(0.9em, 3vw, 1.1em);
     font-weight: 600;
     background: white;
     transition: all 0.3s;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .piece-option:hover {
@@ -89,14 +96,17 @@ input[type="file"]:hover {
 .piece-option.selected {
     background: #667eea;
     color: white;
-    border-color: #667eea;
-}
-
-.btn {
-    padding: 18px 40px;
-    font-size: 1.2em;
+    border-col5px 30px;
+    font-size: clamp(1em, 3vw, 1.2em);
     font-weight: 600;
     border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    margin-top: 10px;
+    min-height: 44px;
+    width: 100%;
+    max-width: 40
     border-radius: 10px;
     cursor: pointer;
     transition: all 0.3s;
@@ -156,7 +166,9 @@ input[type="file"]:hover {
 
 .puzzle-board, .pieces-tray {
     border: 3px solid #667eea;
-    border-radius: 15px;
+    border-radiu300px;
+    width: 100%;
+    overflow: hiddenpx;
     background: #f8f9ff;
     position: relative;
     min-height: 400px;
@@ -210,12 +222,10 @@ input[type="file"]:hover {
     }
 }
 
-.stats {
-    text-align: center;
-    padding: 15px;
+.stats {2px;
     background: #eef1ff;
     border-radius: 10px;
-    font-size: 1.1em;
+    font-size: clamp(0.95em, 3vw, 1.1em);
     font-weight: 600;
     color: #667eea;
 }
@@ -223,9 +233,11 @@ input[type="file"]:hover {
 .success-message {
     display: none;
     text-align: center;
-    padding: 30px;
+    padding: 20px;
     background: linear-gradient(135deg, #48bb78, #38a169);
     color: white;
+    border-radius: 15px;
+    font-size: clamp(1.1em, 4vw, 1.5em)
     border-radius: 15px;
     font-size: 1.5em;
     font-weight: 700;
@@ -254,35 +266,36 @@ input[type="file"]:hover {
     text-align: center;
     font-weight: 600;
     color: #667eea;
-    padding: 10px;
-    font-size: 1.1em;
+    padding: 8px;
+    font-size: clamp(0.9em, 3vw, 1.1em);
 }
 
 /* Puzzle Library Styles */
 .puzzle-library {
-    margin-bottom: 30px;
-    padding: 20px;
+    margin-bottom: 20px;
+    padding: 15px;
     background: #f8f9ff;
     border-radius: 15px;
 }
 
 .puzzle-library h3 {
     color: #667eea;
-    margin-bottom: 15px;
-    font-size: 1.3em;
+    margin-bottom: 12px;
+    font-size: clamp(1.1em, 4vw, 1.3em);
 }
 
 .library-empty {
     color: #999;
     font-style: italic;
     text-align: center;
-    padding: 20px;
+    padding: 15px;
+    font-size: clamp(0.9em, 3vw, 1em);
 }
 
 .library-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 12px;
 }
 
 .library-item {
@@ -299,22 +312,21 @@ input[type="file"]:hover {
 }
 
 .library-item img {
-    width: 100%;
-    height: 120px;
+    width: 1000px;
     object-fit: cover;
     display: block;
 }
 
 .library-item-actions {
-    padding: 10px;
+    padding: 8px;
     display: flex;
     gap: 5px;
     justify-content: space-between;
 }
 
 .btn-small {
-    padding: 8px 12px;
-    font-size: 0.85em;
+    padding: 8px 10px;
+    font-size: clamp(0.75em, 2.5vw, 0.85em);
     font-weight: 600;
     border: none;
     border-radius: 5px;
@@ -322,6 +334,8 @@ input[type="file"]:hover {
     background: #667eea;
     color: white;
     flex: 1;
+    transition: background 0.2s;
+    min-height: 36px
     transition: background 0.2s;
 }
 
@@ -338,26 +352,88 @@ input[type="file"]:hover {
 }
 
 /* iPad and Mobile Responsive Design */
-@media (max-width: 768px) {
+@medbody {
+        padding: 5px;
+    }
+    
+    .container {
+        padding: 15px;
+        border-radius: 15px;
+    }
+    
     .puzzle-container {
         grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .puzzle-board, .pieces-tray {
+        min-height: 250px;
     }
     
     .piece-selector {
         grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+    }
+    
+    .piece-option {
+        padding: 10px 5px;
     }
 
-    h1 {
-        font-size: 1.5em;
+    .setup-panel {
+        gap: 15px;
+        margin-bottom: 20px;
     }
+    
+    .library-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 10px;
+    }
+    
+    .library-item img {
+        height: 80px;
+    }
+    
+    .controls {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: none;
+    }
+}
 
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
     .container {
-        padding: 20px;
+        padding: 12px;
+        border-radius: 12px;
+    }
+    
+    .puzzle-library {
+        padding: 12px;
+    }
+    
+    .piece-selector {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+    }
+    
+    .library-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
     .puzzle-container {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .container {
+        padding: 25px
         grid-template-columns: 1fr 1fr;
     }
 }
