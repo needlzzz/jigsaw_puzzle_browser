@@ -230,7 +230,22 @@ function calculateGridDimensions(img, totalPieces) {
 // Calculate board and piece dimensions
 function calculateBoardDimensions(puzzleBoard, img, cols, rows) {
     const aspectRatio = img.width / img.height;
-    const boardWidth = Math.min(puzzleBoard.parentElement.clientWidth - 40, 600);
+    const viewportWidth = window.innerWidth;
+    
+    // Scale board size based on viewport
+    let maxBoardWidth;
+    if (viewportWidth <= 480) {
+        // iPhone: use almost full width, smaller max
+        maxBoardWidth = Math.min(viewportWidth - 30, 360);
+    } else if (viewportWidth <= 768) {
+        // iPad portrait: moderate size
+        maxBoardWidth = Math.min(viewportWidth - 40, 500);
+    } else {
+        // Desktop: larger boards
+        maxBoardWidth = 600;
+    }
+    
+    const boardWidth = Math.min(puzzleBoard.parentElement.clientWidth - 40, maxBoardWidth);
     const boardHeight = boardWidth / aspectRatio;
     const pieceWidth = boardWidth / cols;
     const pieceHeight = boardHeight / rows;
