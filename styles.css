@@ -212,6 +212,7 @@ input[type="file"]:hover {
     position: absolute;
     cursor: move;
     touch-action: none;
+    z-index: 10;
     transition: transform 0.1s;
     filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25)) 
             drop-shadow(0 1px 2px rgba(0, 0, 0, 0.15));
@@ -221,7 +222,7 @@ input[type="file"]:hover {
 
 .puzzle-piece:active {
     cursor: grabbing;
-    z-index: 1000;
+    z-index: 9999;
     transform: scale(1.03);
     filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.35)) 
             drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25))
